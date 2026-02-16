@@ -1,0 +1,14 @@
+enable
+configure terminal
+
+interface fastEthernet0/3
+ description PORT-SECURITY_STATIC_MAC
+ switchport mode access
+ switchport port-security
+ switchport port-security maximum 1
+ switchport port-security mac-address 00AA.BBCC.DDEE
+ switchport port-security violation shutdown
+exit
+
+end
+write memory

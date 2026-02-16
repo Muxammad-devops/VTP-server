@@ -1,0 +1,29 @@
+enable
+configure terminal
+
+! (ixtiyoriy) Portlarni access rejimga tushirish
+interface range fastEthernet0/1 - 0/4
+ switchport mode access
+ spanning-tree portfast
+exit
+
+! Port Security: Fa0/1 misol
+interface fastEthernet0/1
+ description PORT-SECURITY_STICKY_MAX1
+ switchport mode access
+ switchport port-security
+ switchport port-security maximum 1
+ switchport port-security mac-address sticky
+ switchport port-security violation shutdown
+exit
+
+end
+write memory
+
+cleaning:
+enable
+configure terminal
+interface fastEthernet0/1
+ no switchport port-security mac-address sticky
+ switchport port-security mac-address sticky
+end

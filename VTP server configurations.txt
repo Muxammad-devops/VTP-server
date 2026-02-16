@@ -1,0 +1,70 @@
+enable
+configure terminal
+
+! =========================
+! BASIC (ixtiyoriy, lekin tavsiya)
+! =========================
+hostname SW-VTP-SERVER
+no ip domain-lookup
+service password-encryption
+
+! =========================
+! VTP SERVER SETTINGS
+! =========================
+vtp domain MYDOMAIN
+vtp mode server
+vtp version 2
+vtp password MyVtpPass
+vtp pruning
+
+! (ixtiyoriy) VTP update lar uchun revisionni toza saqlash:
+! vtp version 2 da odatda revisionni kamaytirish uchun domainni vaqtincha o'zgartirib qaytarish qilinadi.
+! Bu qatorlar shart emas, ehtiyot bo'lib ishlating.
+
+! =========================
+! VLAN DATABASE (SERVERda VLANlar shu yerda yaratiladi)
+! =========================
+vlan 10
+ name USERS
+vlan 20
+ name STAFF
+vlan 30
+ name SERVERS
+vlan 99
+ name MANAGEMENT
+vlan 999
+ name NATIVE-BLACKHOLE
+exit
+
+! =========================
+! TRUNK PORTS (CLIENT SWITCHlarga ketadigan uplinklar)
+! Fa0/1-2 ni misol qildim, o'zingizda qaysi uplink bo'lsa shuni qo'ying
+! =========================
+interface range fastEthernet0/1 - 0/2
+ description UPLINK_TO_OTHER_SWITCHES
+ switchport mode trunk
+ switchport trunk native vlan 999
+ switchport trunk allowed vlan 10,20,30,99,999
+ switchport nonegotiate
+ spanning-tree portfast trunk
+exit
+
+! =========================
+! MANAGEMENT SVI (ixtiyoriy)
+! =========================
+interface vlan 99
+ ip address 192.168.99.2 255.255.255.0
+ no shutdown
+exit
+ip default-gateway 192.168.99.1
+
+end
+write memory
+
+! =========================
+! VERIFICATION (tekshiruv)
+! =========================
+show vtp status
+show vtp password
+show vlan brief
+show interfaces trunk

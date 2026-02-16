@@ -1,0 +1,20 @@
+enable
+configure terminal
+
+interface fastEthernet0/2
+ description PORT-SECURITY_RESTRICT
+ switchport mode access
+ switchport port-security
+ switchport port-security maximum 2
+ switchport port-security mac-address sticky
+ switchport port-security violation restrict
+exit
+
+end
+write memory
+
+enable
+configure terminal
+errdisable recovery cause psecure-violation
+errdisable recovery interval 60
+end
